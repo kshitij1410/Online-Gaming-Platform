@@ -8,7 +8,7 @@ import { runQuery } from "../utils/runQuer.js";
 export const register = async (req, res) => {
 
   //CHECK EXISTING USER
-  const q = "SELECT * FROM users WHERE email = ?";
+  const q = "SELECT * FROM USERS WHERE email = ?";
 
   try {
     const result = await runQuery(q, [req.body.email]);
@@ -16,7 +16,7 @@ export const register = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
     const id = uuidv4();
-    const q1 = "INSERT INTO users(user_id,name,email,password,coin) VALUES (?,?,?,?,?)";
+    const q1 = "INSERT INTO USERS(user_id,name,email,password,coin) VALUES (?,?,?,?,?)";
     const coin = 500;
     const values = [id, req.body.name, req.body.email, hash, coin];
     const result1 = await runQuery(q1, values);
@@ -34,7 +34,7 @@ export const login = async (req, res) => {
 
   //CHECK USER EXIST
 
-  const q = "SELECT * FROM users WHERE email = ?";
+  const q = "SELECT * FROM USERS WHERE email = ?";
   try {
     const result = await runQuery(q, [req.body.email]);
     if (result.length === 0) return res.status(404).send("User not found!");
@@ -76,7 +76,7 @@ export const updateCoin = async (req, res) => {
   //deduced the coin otherwise add a coins
   if (coin < 0) flag = true;
 
-  const q = "SELECT coin FROM users WHERE email = ?";
+  const q = "SELECT coin FROM USERS WHERE email = ?";
 
   try {
     const data = await runQuery(q, [req.body.email]);
@@ -90,7 +90,7 @@ export const updateCoin = async (req, res) => {
       }
       coin = -coin;
     }
-    const q1 = "UPDATE users set coin=? where email =?"
+    const q1 = "UPDATE USERS set coin=? where email =?"
     await runQuery(q1, [coinValue + coin, req.body.email]);
     // console.log('updated deduced successfully');
     return res.status(200).send("Coins deduced successfully")
@@ -106,7 +106,7 @@ export const updateCoin = async (req, res) => {
 export const getTournamentScore = async (req, res) => {
   // console.log("getTournamnent");
 
-  const q = `select t1.name , t2.score from users as t1 INNER JOIN ((select player_id, temp.score from (SELECT player_id, max(score) as score 
+  const q = `select t1.name , t2.score from USERS as t1 INNER JOIN ((select player_id, temp.score from (SELECT player_id, max(score) as score 
   FROM TOURNAMENT group by player_id) as temp order by temp.score desc limit 3)) as t2 on t1.user_id=t2.player_id`;
 
   try {
@@ -123,7 +123,7 @@ export const getTournamentScore = async (req, res) => {
 
 export const getCoin = async (req, res) => {
 
-  const q = "SELECT coin from users where email=?";
+  const q = "SELECT coin from USERS where email=?";
   try {
     const data = await runQuery(q, [req.body.email]);
     return res.status(200).json(data[0].coin);
@@ -149,7 +149,7 @@ export const addScore = async (req, res) => {
     req.body.player2_id
   ]
 
-  const checkQuery = "select * from games where game_id=?";
+  const checkQuery = "select * from GAMES where game_id=?";
 
   try {
     const data = await runQuery(checkQuery, [req.body.game_id]);
@@ -193,7 +193,7 @@ export const addScore = async (req, res) => {
 export const getScore = async (req, res) => {
 
 
-  const q = "select * from games where game_id=?"
+  const q = "select * from GAMES where game_id=?"
   const data = await runQuery(q, [req.body.game_id]);
 
 
@@ -204,7 +204,7 @@ export const getScore = async (req, res) => {
   const player1_id = data[0].player1_id;
   const player2_id = data[0].player2_id;
   const role = data[0].role;
-  const query = "select email from users where user_id=?";
+  const query = "select email from USERS where user_id=?";
   let queries = [];
   if (player1_score > player2_score) {
     queries.push(player1_id)
@@ -232,7 +232,7 @@ export const getSummary = async (req, res) => {
   if (state === 'win') {
     if (roles === 'all') {
       q =
-        `select temp.name ,temp.email ,temp1.score from users as temp INNER JOIN
+        `select temp.name ,temp.email ,temp1.score from USERS as temp INNER JOIN
         (select
         case
         when player1_score>player2_score then player1_score
@@ -244,13 +244,13 @@ export const getSummary = async (req, res) => {
         when player2_score>player1_score then player2_id
         else player1_id
         end as player_id
-        from games order by _id desc limit 5) as temp1
+        from GAMES order by _id desc limit 5) as temp1
         where temp.user_id=temp1.player_id;`;
 
     }
     else if (roles === 'randomGameEvent') {
       q =
-        `select temp.name ,temp.email ,temp1.score from users as temp INNER JOIN
+        `select temp.name ,temp.email ,temp1.score from USERS as temp INNER JOIN
       (select
       case
       when player1_score>player2_score then player1_score
@@ -262,13 +262,13 @@ export const getSummary = async (req, res) => {
       when player2_score>player1_score then player2_id
       else player1_id
       end as player_id
-      from games where role=? order by _id desc limit 5) as temp1
+      from GAMES where role=? order by _id desc limit 5) as temp1
       where temp.user_id=temp1.player_id;`;
 
 
     } else {
       q =
-        `select temp.name ,temp.email ,temp1.score from users as temp INNER JOIN
+        `select temp.name ,temp.email ,temp1.score from USERS as temp INNER JOIN
       (select
       case
       when player1_score>player2_score then player1_score
@@ -280,7 +280,7 @@ export const getSummary = async (req, res) => {
       when player2_score>player1_score then player2_id
       else player1_id
       end as player_id
-      from games where role=? order by _id desc limit 5) as temp1
+      from GAMES where role=? order by _id desc limit 5) as temp1
       where temp.user_id=temp1.player_id;`;
 
 
@@ -291,7 +291,7 @@ export const getSummary = async (req, res) => {
     //lossing
     if (roles === 'all') {
       q =
-        `select temp.name ,temp.email ,temp1.score from users as temp INNER JOIN
+        `select temp.name ,temp.email ,temp1.score from USERS as temp INNER JOIN
         (select
         case
         when player1_score<player2_score then player1_score
@@ -303,13 +303,13 @@ export const getSummary = async (req, res) => {
         when player2_score<player1_score then player2_id
         else player1_id
         end as player_id
-        from games order by _id desc limit 5) as temp1
+        from GAMES order by _id desc limit 5) as temp1
         where temp.user_id=temp1.player_id;`;
 
     }
     else if (roles === 'randomGameEvent') {
       q =
-        `select temp.name ,temp.email ,temp1.score from users as temp INNER JOIN
+        `select temp.name ,temp.email ,temp1.score from USERS as temp INNER JOIN
       (select
       case
       when player1_score<player2_score then player1_score
@@ -321,13 +321,13 @@ export const getSummary = async (req, res) => {
       when player2_score<player1_score then player2_id
       else player1_id
       end as player_id
-      from games where role=? order by _id desc limit 5) as temp1
+      from GAMES where role=? order by _id desc limit 5) as temp1
       where temp.user_id=temp1.player_id;`;
 
 
     } else {
       q =
-        `select temp.name ,temp.email ,temp1.score from users as temp INNER JOIN
+        `select temp.name ,temp.email ,temp1.score from USERS as temp INNER JOIN
       (select
       case
       when player1_score<player2_score then player1_score
@@ -339,7 +339,7 @@ export const getSummary = async (req, res) => {
       when player2_score<player1_score then player2_id
       else player1_id
       end as player_id
-      from games where role=? order by _id desc limit 5) as temp1
+      from GAMES where role=? order by _id desc limit 5) as temp1
       where temp.user_id=temp1.player_id;`;
 
 
