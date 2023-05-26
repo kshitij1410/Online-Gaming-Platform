@@ -242,19 +242,17 @@ describe('getCoin function', () => {
 
 describe('ADDING SCORE function', () => {
 
-    let req;
-    req = () => {
-        return {
-            game_id: "3456t7y",
-            role: "randomGameEvent",
-            player1_score: "3",
-            player2_score: "7",
-            player1_id: "567ui",
-            player2_id: "54678"
-        }
-    }
-
     it('ADDING RANDOM SCORE ', async () => {
+        let req = () => {
+            return {
+                game_id: "3456t7y",
+                role: "randomGameEvent",
+                player1_score: "3",
+                player2_score: "7",
+                player1_id: "567ui",
+                player2_id: "54678"
+            }
+        }
         const mockReq = req();
         const runquery1 = jest.spyOn(querySel, 'runQuery');
         runquery1.mockResolvedValueOnce([]);
@@ -268,14 +266,14 @@ describe('ADDING SCORE function', () => {
     });
 
     it('ADDING Tournament SCORE ', async () => {
-        req = () => {
+        let req = () => {
             return {
-                game_id: "3456t7y",
+                game_id: "34560t7y",
                 role: "tournamentGameEvent",
                 player1_score: "3",
                 player2_score: "7",
-                player1_id: "567ui",
-                player2_id: "54678"
+                player1_id: "5679ui",
+                player2_id: "546078"
             }
         }
         const mockReq = req();
@@ -306,14 +304,6 @@ describe('getScore function', () => {
         }
     }
 
-    const mockData = {
-        game_id: "3456t7y",
-        role: "randomGameEvent",
-        player1_score: "3",
-        player2_score: "7",
-        player1_id: "567ui",
-        player2_id: "54678"
-    }
 
     it('Game id is not given', async () => {
 
@@ -330,15 +320,23 @@ describe('getScore function', () => {
     it('GETTING SCORE', async () => {
 
         const mockReq = req();
+        const mockData = {
+            game_id: "3456t7y",
+            role: "randomGameEvent",
+            player1_score: "3",
+            player2_score: "7",
+            player1_id: "567ui",
+            player2_id: "54678"
+        }
 
 
         const runquery1 = jest.spyOn(querySel, 'runQuery');
         runquery1.mockResolvedValueOnce([mockData]);
         runquery1.mockResolvedValueOnce(["abc@gmail.com"]);
         const result = await request(app).post("/api/getScore").send(mockReq);
-
-        expect(runquery1).toHaveBeenCalledTimes(2);
+        
         expect(result.status).toBe(200);
+        expect(runquery1).toHaveBeenCalledTimes(2);
 
     });
 

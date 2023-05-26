@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import { runQuery } from "../utils/runQuer.js";
 
 
-let times = 0;
 export const register = async (req, res) => {
 
   //CHECK EXISTING USER
@@ -139,10 +138,7 @@ export const getCoin = async (req, res) => {
 
 export const addScore = async (req, res) => {
 
-  if (times === 1) {
-    return res.status(200);
-  }
-  times += 1;
+
 
   const queries = [
     req.body.game_id,
@@ -158,6 +154,12 @@ export const addScore = async (req, res) => {
   try {
     const data = await runQuery(checkQuery, [req.body.game_id]);
 
+    let times = 0;
+    if (times % 2 === 1) {
+      return res.status(200);
+    }
+    times += 1;
+    
     if (data.length === 0) {
       const q = "INSERT INTO GAMES(game_id,role,player1_score,player2_score,player1_id,player2_id) values (?,?,?,?,?,?)"
 
@@ -190,8 +192,10 @@ export const addScore = async (req, res) => {
 
 export const getScore = async (req, res) => {
 
+
   const q = "select * from games where game_id=?"
   const data = await runQuery(q, [req.body.game_id]);
+
 
   if (data.length === 0) return res.status(400).send("game id is not found");
 
