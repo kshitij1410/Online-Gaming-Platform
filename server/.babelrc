@@ -1,0 +1,5 @@
+{
+    "presets": ["@babel/preset-env"]
+}
+
+//it is a package that allows us to use latest javascript

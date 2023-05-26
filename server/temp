@@ -1,0 +1,90 @@
+
+
+
+/*
+
+import request from 'supertest';
+import router from '../routes/auth' 
+import bcrypt from "bcryptjs";
+import { db } from '../DB/createTable';
+import { registerController } from '../controller/auth';
+
+
+jest.useFakeTimers('legacy')
+jest.mock('uuid', () => ({
+    v4: jest.fn().mockReturnValue('mocked-uuid'),
+}));
+
+jest.mock('../DB/createTable')
+
+describe('Registration API',() => {
+    beforeAll(async () => {
+        // Create a test database connection
+
+
+        // Create a test users table
+        await db.query(`
+      CREATE TABLE USERS (
+        user_id VARCHAR(100) NOT NULL PRIMARY KEY ,
+        email  VARCHAR(100) NOT NULL UNIQUE,
+        password  VARCHAR(150) NOT NULL,
+        name  VARCHAR(130) NOT NULL,
+        coin int NOT NULL
+      )
+    `);
+
+        // db.close();
+    });
+
+    afterAll(async () => {
+        // Drop the test users table
+        await db.query('DROP TABLE users');
+        // db.close();
+    });
+
+    it('should register a user successfully', async () => {
+        const userData = {
+            name: "abc",
+            email: "abc@gmail.com",
+            password: "123456"
+        };
+
+
+        const genSaltSyncMock = jest.spyOn(bcrypt, 'genSaltSync').mockReturnValue('salt');
+        const hashSyncMock = jest.spyOn(bcrypt, 'hashSync').mockReturnValue('hashedpassword');
+
+        const response = await request(router)
+            .post('/api/register')
+            .send(userData)
+            .expect(200);
+
+        expect(response.body).toEqual({ message: 'Registration successful' });
+
+        
+
+        const [registeredUser] = await db.query(
+            'SELECT * FROM users WHERE user_id = ?',
+            ['mocked-uuid']
+        );
+        // db.close();
+
+        expect(registeredUser.length).toBe(1);
+        expect(registeredUser[0].name).toBe('abc');
+        expect(registeredUser[0].password).toBe('hashedpassword');
+    });
+
+    it('should handle duplicate registration', async () => {
+        const userData = {
+            name: "abc",
+            email: "abc@gmail.com",
+            password: "123456"
+        };
+
+        const response = await request(router)
+            .post('/api/register')
+            .send(userData)
+            .expect(409);
+
+        expect(response.body).toEqual({ message: 'User already exists' });
+    });
+});*/
