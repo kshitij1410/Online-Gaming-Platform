@@ -6,22 +6,30 @@
 
 
 ![Online Gaming Platform](client/images/login_page.png)
+
+
 ![Online Gaming Platform](client/images/home_page.png)
+
+
 ![Online Gaming Platform](client/images/loading.gif)
+
+
 ![Online Gaming Platform](client/images/gameing.png)
+
+
 ![Online Gaming Platform](client/images/winning_Page.png)
 
 
 ## Technology Stack Used
 
-![React Js](client/images/icons8-react-16.png) 
+![React Js](client/images/icons8-react-40.png) 
 ![Typescript](client/images/icons8-typescript-48.png)
 ![Tailwind CSS](client/images/icons8-css-48.png)
 ![JavaScript](client/images/icons8-javascript-48.png)
 ![Node Js](client/images/icons8-nodejs-48.png) 
 ![MYSQL](client/images/icons8-mysql-48.png) 
 ![Jest](client/images/icons8-jest-can-collect-code-coverage-information-from-entire-projects-48.png) 
-![Docker](client/images/icons8-docker-logo-24.png) 
+![Docker](client/images/icons8-docker-48.png) 
 
 
 - Front End - **React Js**, **Typescript**, **Tailwind CSS**, **JavaScript**
@@ -33,7 +41,7 @@
 
 ## Installing 
 
-[![Docker](client/images//docker.png)](https://hub.docker.com/_/docker)
+[![Docker](client/images/icons8-docker-48.png)](https://hub.docker.com/_/docker)
 
 - Download [DOCKER](https://hub.docker.com/_/docker)
 
