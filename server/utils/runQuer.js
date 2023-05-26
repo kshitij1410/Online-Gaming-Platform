@@ -1,5 +1,5 @@
 import { db } from "../DB/createTable.js";
-
+import { QUERIES } from "../DB/initial-queries.js";
 export function runQuery(sql, params) {
    
     return new Promise((resolve, reject) => {
@@ -18,3 +18,14 @@ export function runQuery(sql, params) {
 
 };
 
+export function runDbQueries(){
+    QUERIES.forEach((item) => {
+        db.query(item.QUERY, [], (err, _) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        })
+    })
+    
+}

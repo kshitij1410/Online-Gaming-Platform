@@ -1,10 +1,11 @@
 import mysql from "mysql";
 
 export const db = mysql.createConnection({
-  host: "localhost",
+  host: "game-mysqldb-1",
   user: "root",
   password: "19Eskcs121@",
-  database: "games"
+  database: "games",
+  port:"3306"
 });
 
 

@@ -10,6 +10,7 @@ import { handleDisconnect, handleMessage} from './websocket/websocket.js';
 const server = http.createServer();
 const wsServer = new WebSocketServer({ server });
 import { v4 as uuidv4 } from "uuid";
+import { runDbQueries } from './utils/runQuer.js';
 
 
 //middleware
@@ -24,15 +25,9 @@ app.use("/api", authRoutes);
 // migration -->single query,mut.. ,reexecution--> 
 
 // queries to create tables 
-QUERIES.forEach((item) => {
-    db.query(item.QUERY, [], (err, _) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-    })
-})
 
+
+runDbQueries();
 
 //server port 
 app.listen(8800, async () => {

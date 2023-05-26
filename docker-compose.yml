@@ -24,8 +24,8 @@ services:
     env_file: ./.env
     ports:
       - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+      - $NODE_LOCAL_WEBSCOKET_PORT:$NODE_DOCKER_WEBSOCKET_PORT
     environment:
-      - DB_HOST=mysqldb
       - DB_USER=$MYSQLDB_USER
       - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
       - DB_NAME=$MYSQLDB_DATABASE
