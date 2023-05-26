@@ -50,11 +50,9 @@
 
 1. Download [this](https://github.com/kshitij1410/Online-Gaming-Platform) repo and extract it in your directory. 
 
-2. Run `npm install` to install all dependencies.
+2. Run this command on terminal `docker-compose up`.
 
-3. Run this command on terminal `docker-compose up`.
-
-4. Before running this command make sure you have docker desktop software install in your pc. 
+3. Before running this command make sure you have docker desktop software install in your pc. 
 
 
 ## Need help?
