@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon ./src/index.js",
     "test": "jest",
     "testtdd": "jest --watchAll",
     "coverage":"jest --coverage"

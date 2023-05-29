@@ -1,9 +1,5 @@
-import express from 'express';
-import { db } from './DB/createTable.js';
-const app = express();
-import authRoutes from './routes/auth.js';
-import { QUERIES } from './DB/initial-queries.js';
-import cors from "cors";
+
+import app from './app.js';
 import { WebSocket, WebSocketServer } from 'ws';
 import http from 'http'; 
 import { handleDisconnect, handleMessage} from './websocket/websocket.js';
@@ -12,29 +8,15 @@ const wsServer = new WebSocketServer({ server });
 import { v4 as uuidv4 } from "uuid";
 import { runDbQueries } from './utils/runQuer.js';
 
-
-//middleware
-app.use(express.json());
-app.use(cors());
-
-
-//user route
-app.use("/api", authRoutes);
-
-
-// migration -->single query,mut.. ,reexecution--> 
-
-// queries to create tables 
-
-
-runDbQueries();
-
 //server port 
 app.listen(8800, async () => {
     console.log("listen to server");
 })
 
+// migration -->single query,mut.. ,reexecution--> 
 
+// queries to create tables 
+runDbQueries();
 
 //websocket 
 
@@ -50,6 +32,3 @@ wsServer.on('connection', function (connection) {
     connection.on('message', (message) => handleMessage(message,userId,connection));
     connection.on('close', () => handleDisconnect(userId));
 });
-
-// module.exports = app;
-export default app;

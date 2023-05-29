@@ -1,8 +1,9 @@
-import { db } from "../DB/createTable.js";
+import { db } from "../database/createTable.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { runQuery } from "../utils/runQuer.js";
+import { addScoreinGameTable, addScoreofTournament, createUser, getScoreUtil, updateCoinUtil } from "../services/auth/index.js";
 
 
 export const register = async (req, res) => {
@@ -13,27 +14,16 @@ export const register = async (req, res) => {
   try {
     const result = await runQuery(q, [req.body.email]);
     if (result.length) return res.status(409).send("User already exists!")
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(req.body.password, salt);
-    const id = uuidv4();
-    const q1 = "INSERT INTO USERS(user_id,name,email,password,coin) VALUES (?,?,?,?,?)";
-    const coin = 500;
-    const values = [id, req.body.name, req.body.email, hash, coin];
-    const result1 = await runQuery(q1, values);
+    createUser(req.body.name, req.body.email, req.body.password);
     return res.status(200).send("User has been created.")
   }
   catch (error) {
-    console.log(' error', error);
     return res.status(409).send(error.message)
   }
-
 };
 
-
 export const login = async (req, res) => {
-
   //CHECK USER EXIST
-
   const q = "SELECT * FROM USERS WHERE email = ?";
   try {
     const result = await runQuery(q, [req.body.email]);
@@ -49,15 +39,11 @@ export const login = async (req, res) => {
       return res.status(400).send("Invalid Credentails!");
 
     const { password, ...rest } = result[0];
-
     return res.status(200).send(rest);
-
   }
   catch (err) {
-    console.log(' error', err);
     return res.status(409).send(err.message)
   }
-
 };
 
 export const logout = (req, res) => {
@@ -68,7 +54,6 @@ export const logout = (req, res) => {
 };
 
 export const updateCoin = async (req, res) => {
-
   // console.log("update coin")
   // console.log(req.body);
   let coin = req.body.coin;
@@ -77,10 +62,10 @@ export const updateCoin = async (req, res) => {
   if (coin < 0) flag = true;
 
   const q = "SELECT coin FROM USERS WHERE email = ?";
-
   try {
     const data = await runQuery(q, [req.body.email]);
     if (data.length === 0) return res.status(404).send("User not found!");
+
     const coinValue = data[0].coin;
 
     if (flag === true) {
@@ -90,21 +75,16 @@ export const updateCoin = async (req, res) => {
       }
       coin = -coin;
     }
-    const q1 = "UPDATE USERS set coin=? where email =?"
-    await runQuery(q1, [coinValue + coin, req.body.email]);
-    // console.log('updated deduced successfully');
+
+    updateCoinUtil(coinValue, coin, req.body.email);
     return res.status(200).send("Coins deduced successfully")
   }
   catch (error) {
-    console.log(' error', error);
     return res.status(409).send(error.message)
   }
-
 }
 
-
 export const getTournamentScore = async (req, res) => {
-  // console.log("getTournamnent");
 
   const q = `select t1.name , t2.score from USERS as t1 INNER JOIN ((select player_id, temp.score from (SELECT player_id, max(score) as score 
   FROM TOURNAMENT group by player_id) as temp order by temp.score desc limit 3)) as t2 on t1.user_id=t2.player_id`;
@@ -114,12 +94,9 @@ export const getTournamentScore = async (req, res) => {
     return res.status(200).send(data);
   }
   catch (error) {
-    console.log(' error', error);
     return res.status(409).send(error.message)
   }
-
 }
-
 
 export const getCoin = async (req, res) => {
 
@@ -129,17 +106,11 @@ export const getCoin = async (req, res) => {
     return res.status(200).json(data[0].coin);
   }
   catch (error) {
-    console.log(' error', error);
     return res.status(409).send(error.message)
   }
-
 }
 
-
 export const addScore = async (req, res) => {
-
-
-
   const queries = [
     req.body.game_id,
     req.body.role,
@@ -153,23 +124,17 @@ export const addScore = async (req, res) => {
 
   try {
     const data = await runQuery(checkQuery, [req.body.game_id]);
-
     let times = 0;
     if (times % 2 === 1) {
       return res.status(200);
     }
     times += 1;
-    
+
     if (data.length === 0) {
-      const q = "INSERT INTO GAMES(game_id,role,player1_score,player2_score,player1_id,player2_id) values (?,?,?,?,?,?)"
-
-      await runQuery(q, queries);
-
+      addScoreinGameTable(queries);
 
       if (req.body.role === 'tournamentGameEvent') {
-        let id = uuidv4();
-        const q1 = `INSERT INTO TOURNAMENT(score,player_id,tournament_id) values (?,?,?), (?,?,?);`
-        await runQuery(q1, [req.body.player1_score, req.body.player1_id, id, req.body.player2_score, req.body.player2_id, id]);
+        addScoreofTournament(req.body.player1_score, req.body.player1_id, req.body.player2_score, req.body.player2_id);
         return res.send("Tournamnet Score is added sucessfully...")
       }
       else
@@ -177,49 +142,28 @@ export const addScore = async (req, res) => {
     }
     else {
       return res.status(200);
-
     }
 
   }
   catch (error) {
-    console.log(' error', error);
     return res.status(409).send(error.message)
   }
-
 }
-
-
 
 export const getScore = async (req, res) => {
 
-
   const q = "select * from GAMES where game_id=?"
   const data = await runQuery(q, [req.body.game_id]);
-
-
   if (data.length === 0) return res.status(400).send("game id is not found");
-
   const player1_score = data[0].player1_score;
   const player2_score = data[0].player2_score;
   const player1_id = data[0].player1_id;
   const player2_id = data[0].player2_id;
   const role = data[0].role;
-  const query = "select email from USERS where user_id=?";
-  let queries = [];
-  if (player1_score > player2_score) {
-    queries.push(player1_id)
-  } else if (player1_score <= player2_score) {
-    queries.push(player2_id);
-  }
-
-  const result = await runQuery(query, queries);
-
+  const result = await getScoreUtil(data);
   const email = result[0].email;
   return res.status(200).send({ email, player1_score, player1_id, player2_score, player2_id, role });
-
 }
-
-
 
 export const getSummary = async (req, res) => {
   let roles = req.body.role;

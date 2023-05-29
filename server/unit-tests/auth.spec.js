@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs";
-import app from '../index'
+import app from '../src/app.js'
 import request from 'supertest'
-import { db } from "../DB/createTable";
-import * as registerController from '../controller/auth.js'
-import * as querySel from "../utils/runQuer";
+// import { db } from "../src/database/createTable.js";
+// import * as registerController from '../src/controller/auth.js'
+import * as querySel from "../src/utils/runQuer.js";
 
-import { register } from "../controller/auth.js";
-jest.mock("../DB/createTable")
+// import { register } from "../src/controller/auth.js";
+jest.mock("../src/database/createTable.js")
 
 afterEach(() => {
     jest.clearAllMocks();
@@ -328,11 +328,13 @@ describe('getScore function', () => {
             player1_id: "567ui",
             player2_id: "54678"
         }
-
+        const resultMock ={
+            email:"abc@gmail.com"
+        }
 
         const runquery1 = jest.spyOn(querySel, 'runQuery');
         runquery1.mockResolvedValueOnce([mockData]);
-        runquery1.mockResolvedValueOnce(["abc@gmail.com"]);
+        runquery1.mockResolvedValueOnce([resultMock]);
         const result = await request(app).post("/api/getScore").send(mockReq);
         
         expect(result.status).toBe(200);

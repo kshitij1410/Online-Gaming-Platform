@@ -1,5 +1,5 @@
-import { db } from "../DB/createTable.js";
-import { QUERIES } from "../DB/initial-queries.js";
+import { db } from '../database/createTable.js';
+import { QUERIES } from "../database/initial-queries.js";
 export function runQuery(sql, params) {
    
     return new Promise((resolve, reject) => {
